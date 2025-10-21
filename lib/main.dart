@@ -89,30 +89,30 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
                 Icons.location_city,
                 color: Colors.blueAccent,
               ),
-              title: const Text("x/TamilNadu Cities"),
+              title: const Text("TamilNadu Cities"),
               children: [
                 ListTile(
-                  title: const Text("x/Chennai"),
+                  title: const Text("Chennai"),
                   onTap: () => _openCommunity(context, "Chennai"),
                 ),
                 ListTile(
-                  title: const Text("x/Coimbatore"),
+                  title: const Text("Coimbatore"),
                   onTap: () => _openCommunity(context, "Coimbatore"),
                 ),
                 ListTile(
-                  title: const Text("x/Madurai"),
+                  title: const Text("Madurai"),
                   onTap: () => _openCommunity(context, "Madurai"),
                 ),
                 ListTile(
-                  title: const Text("x/Tiruchirappalli"),
+                  title: const Text("Tiruchirappalli"),
                   onTap: () => _openCommunity(context, "Tiruchirappalli"),
                 ),
                 ListTile(
-                  title: const Text("x/Salem"),
+                  title: const Text("Salem"),
                   onTap: () => _openCommunity(context, "Salem"),
                 ),
                 ListTile(
-                  title: const Text("x/Tirunelveli"),
+                  title: const Text("Tirunelveli"),
                   onTap: () => _openCommunity(context, "Tirunelveli"),
                 ),
               ],
@@ -124,26 +124,26 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
                 Icons.account_balance,
                 color: Colors.orangeAccent,
               ),
-              title: const Text("d/Departments"),
+              title: const Text("Departments"),
               children: [
                 ListTile(
-                  title: const Text("d/Water"),
+                  title: const Text("Water"),
                   onTap: () => _openCommunity(context, "WaterDept"),
                 ),
                 ListTile(
-                  title: const Text("d/RoadSafety"),
+                  title: const Text("Road Safety"),
                   onTap: () => _openCommunity(context, "RoadSafetyDept"),
                 ),
                 ListTile(
-                  title: const Text("d/Sanitation"),
+                  title: const Text("Sanitation"),
                   onTap: () => _openCommunity(context, "SanitationDept"),
                 ),
                 ListTile(
-                  title: const Text("d/Electricity"),
+                  title: const Text("Electricity"),
                   onTap: () => _openCommunity(context, "ElectricityDept"),
                 ),
                 ListTile(
-                  title: const Text("d/Health"),
+                  title: const Text("Health"),
                   onTap: () => _openCommunity(context, "HealthDept"),
                 ),
               ],

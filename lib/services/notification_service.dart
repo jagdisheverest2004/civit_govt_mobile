@@ -1,5 +1,12 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+@pragma('vm:entry-point')
+void notificationTapBackground(NotificationResponse notificationResponse) {
+  // Handle notification background tap
+  debugPrint('Notification tapped in background: ${notificationResponse.payload}');
+}
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -15,42 +22,86 @@ class NotificationService {
   }
 
   Future<void> _initializeSettings() async {
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const iosSettings = IOSInitializationSettings();
-    
-    const initSettings = InitializationSettings(
-      android: androidSettings,
-      iOS: iosSettings,
+    // Android initialization settings
+    const AndroidInitializationSettings androidInitSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    // Request permissions for iOS
+    final DarwinInitializationSettings darwinInitSettings = DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+      notificationCategories: [
+        DarwinNotificationCategory(
+          'civic_issues',
+          actions: <DarwinNotificationAction>[
+            DarwinNotificationAction.plain('view', 'View Issue'),
+          ],
+        ),
+      ],
     );
 
+    // Initialize settings for all platforms
+    final InitializationSettings initSettings = InitializationSettings(
+      android: androidInitSettings,
+      iOS: darwinInitSettings,
+    );
+
+    // Initialize the plugin
     await _notifications.initialize(
       initSettings,
-      onSelectNotification: (payload) {
-        // Handle notification tap
-        debugPrint('Notification tapped: $payload');
+      // Handle notification taps
+      onDidReceiveNotificationResponse: (NotificationResponse response) {
+        switch (response.notificationResponseType) {
+          case NotificationResponseType.selectedNotification:
+            debugPrint('Notification tapped');
+            break;
+          case NotificationResponseType.selectedNotificationAction:
+            debugPrint('Notification action tapped: ${response.actionId}');
+            break;
+        }
       },
+      onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
-  }
 
+    // Request permissions for Android (API level >= 33)
+    if (Platform.isAndroid) {
+      final AndroidFlutterLocalNotificationsPlugin? androidImplementation = 
+          _notifications.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+          
+      if (androidImplementation != null) {
+        await androidImplementation.requestNotificationsPermission();
+      }
+    }
+}
   /// Show a simple notification
   Future<void> showNotification({
     required String title,
     required String body,
     String? payload,
   }) async {
-    const androidDetails = AndroidNotificationDetails(
-      'civic_issues_channel',
-      'Civic Issues',
+    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      'civic_issues_channel', // channel ID
+      'Civic Issues', // channel name
       channelDescription: 'Notifications for civic issue updates',
       importance: Importance.high,
       priority: Priority.high,
+      ticker: 'Civic Issue Update',
+      actions: <AndroidNotificationAction>[
+        AndroidNotificationAction('view', 'View Issue'),
+      ],
     );
 
-    const iosDetails = IOSNotificationDetails();
+    final DarwinNotificationDetails darwinDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+      categoryIdentifier: 'civic_issues',
+      threadIdentifier: 'civic_issues',
+    );
 
-    const details = NotificationDetails(
+    final NotificationDetails details = NotificationDetails(
       android: androidDetails,
-      iOS: iosDetails,
+      iOS: darwinDetails,
     );
 
     await _notifications.show(

@@ -3,6 +3,14 @@ allprojects {
         google()
         mavenCentral()
     }
+
+    configurations.all {
+        resolutionStrategy {
+            // This forces all modules to use a consistent, modern version of androidx.core
+            // which resolves the 'bigLargeIcon' method signature conflict.
+            force("androidx.core:core:1.13.1") 
+        }
+    }
 }
 
 val newBuildDir: Directory =

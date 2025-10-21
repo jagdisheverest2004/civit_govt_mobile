@@ -7,34 +7,31 @@ plugins {
 
 android {
     namespace = "com.example.civic_issue_app"
-    compileSdk = 36  // Updated to meet plugin requirements
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
         isCoreLibraryDesugaringEnabled = true
+        // Set Java version to 17 for consistency with the Kotlin JVM target
+        sourceCompatibility = JavaVersion.VERSION_17 
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        // Set JVM target to 17 to resolve the Inconsistent JVM-target error
+        jvmTarget = JavaVersion.VERSION_17.toString() 
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.civic_issue_app"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion  // Minimum SDK version for awesome_notifications
-        targetSdk = 36  // Target SDK version
+        minSdk = flutter.minSdkVersion
+        targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
         }
     }
@@ -45,5 +42,6 @@ flutter {
 }
 
 dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    // FIX: Changed to a stable version (2.0.4) because 2.2.0 could not be found
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4") 
 }

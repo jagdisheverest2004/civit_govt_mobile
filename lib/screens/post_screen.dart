@@ -195,8 +195,16 @@ class _PostScreenState extends State<PostScreen> {
               DropdownButtonFormField<String>(
                 initialValue: _selectedIssue,
                 hint: const Text("Select Issue"),
+                isExpanded: true,
                 items: _issues.map((issue) {
-                  return DropdownMenuItem(value: issue, child: Text(issue));
+                  return DropdownMenuItem(
+                    value: issue,
+                    child: Text(
+                      issue,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  );
                 }).toList(),
                 onChanged: (value) {
                   setState(() {
@@ -226,8 +234,16 @@ class _PostScreenState extends State<PostScreen> {
               DropdownButtonFormField<String>(
                 initialValue: _selectedDepartment,
                 hint: const Text("Select Department"),
+                isExpanded: true,
                 items: _departments.map((dept) {
-                  return DropdownMenuItem(value: dept, child: Text(dept));
+                  return DropdownMenuItem(
+                    value: dept,
+                    child: Text(
+                      dept,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  );
                 }).toList(),
                 onChanged: (value) {
                   setState(() {
@@ -245,8 +261,16 @@ class _PostScreenState extends State<PostScreen> {
               DropdownButtonFormField<String>(
                 initialValue: _selectedCommunity,
                 hint: const Text("Select Community"),
+                isExpanded: true,
                 items: _communities.map((comm) {
-                  return DropdownMenuItem(value: comm, child: Text(comm));
+                  return DropdownMenuItem(
+                    value: comm,
+                    child: Text(
+                      comm,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  );
                 }).toList(),
                 onChanged: (value) {
                   setState(() {

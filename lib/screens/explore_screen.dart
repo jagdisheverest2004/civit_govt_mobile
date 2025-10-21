@@ -1,129 +1,168 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import '../widgets/post_card.dart';
-import '../data/post_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../app_providers.dart';
+import '../widgets/issue_card.dart';
 
-class ExploreScreenApi extends StatefulWidget {
-  final String currentCommunity;
+class ExploreScreen extends ConsumerStatefulWidget {
+  final String? currentCommunity;
 
-  const ExploreScreenApi({super.key, required this.currentCommunity});
+  const ExploreScreen({super.key, this.currentCommunity});
 
   @override
-  State<ExploreScreenApi> createState() => _ExploreScreenApiState();
+  ConsumerState<ExploreScreen> createState() => _ExploreScreenState();
 }
 
-class _ExploreScreenApiState extends State<ExploreScreenApi> {
-  List<Post> posts = [];
-  List<String> recommendedDepartments = [
-    "Health",
-    "Education",
-    "Transport",
-    "Environment",
-    "Public Safety",
+class _ExploreScreenState extends ConsumerState<ExploreScreen> {
+  static const List<String> departments = [
+    'All',
+    'Public Works',
+    'Parks & Recreation',
+    'Transportation',
+    'Utilities',
+    'Public Safety',
+    'Environmental',
   ];
 
-  bool isLoading = true;
+  static const List<String> statuses = [
+    'All',
+    'open',
+    'in_progress',
+    'resolved',
+    'closed',
+  ];
 
-  @override
-  void initState() {
-    super.initState();
-    fetchPosts();
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'open':
+        return Colors.red;
+      case 'in_progress':
+        return Colors.orange;
+      case 'resolved':
+        return Colors.green;
+      case 'closed':
+        return Colors.grey;
+      default:
+        return Colors.blue;
+    }
   }
 
-  Future<void> fetchPosts() async {
-    try {
-      final response = await http.get(
-        Uri.parse(
-          // 👉 Add your endpoint here
-          "",
+  Widget _buildFilterGrid(bool isDark, dynamic filters) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 3,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
         ),
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-
-        setState(() {
-          posts = List<Post>.from(data.map((json) => Post.fromJson(json)));
-          isLoading = false;
-        });
-      } else {
-        setState(() => isLoading = false);
-      }
-    } catch (e) {
-      setState(() => isLoading = false);
-    }
+        itemCount: departments.length + statuses.length,
+        itemBuilder: (context, index) {
+          bool isDepartmentFilter = index < departments.length;
+          String label = isDepartmentFilter 
+              ? departments[index]
+              : statuses[index - departments.length];
+          bool isSelected = isDepartmentFilter
+              ? (label == 'All' ? filters.department == null : filters.department == label)
+              : (label == 'All' ? filters.status == null : filters.status == label);
+          
+          return Material(
+            color: isSelected 
+                ? (isDepartmentFilter ? Colors.orange : _getStatusColor(label)).withOpacity(0.2)
+                : isDark ? Colors.grey[850]! : Colors.grey[100]!,
+            borderRadius: BorderRadius.circular(8),
+            child: InkWell(
+              onTap: () {
+                if (isDepartmentFilter) {
+                  if (label == 'All') {
+                    ref.read(filtersProvider.notifier).setDepartment(null);
+                  } else {
+                    ref.read(filtersProvider.notifier).setDepartment(
+                      filters.department == label ? null : label
+                    );
+                  }
+                } else {
+                  if (label == 'All') {
+                    ref.read(filtersProvider.notifier).setStatus(null);
+                  } else {
+                    ref.read(filtersProvider.notifier).setStatus(
+                      filters.status == label ? null : label
+                    );
+                  }
+                }
+              },
+              borderRadius: BorderRadius.circular(8),
+              child: Center(
+                child: Text(
+                  label == 'All' ? label : label.replaceAll('_', ' ').toUpperCase(),
+                  style: TextStyle(
+                    color: isSelected
+                        ? isDepartmentFilter ? Colors.orange : _getStatusColor(label)
+                        : isDark ? Colors.white70 : Colors.black87,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final filteredIssues = ref.watch(filteredIssuesProvider);
+    final filters = ref.watch(filtersProvider);
+    final theme = ref.watch(themeProvider);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Scaffold(
-      appBar: AppBar(title: Text("Explore - ${widget.currentCommunity}")),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Recommended Departments
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "Recommended Departments",
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
+      backgroundColor: isDark ? Colors.grey[900] : Colors.grey[100],
+      appBar: AppBar(
+        title: const Text('Explore Issues'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              ref.read(filtersProvider.notifier).clearFilters();
+            },
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          _buildFilterGrid(isDark, filters),
+          if (filteredIssues.isNotEmpty)
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16.0),
+                itemCount: filteredIssues.length,
+                itemBuilder: (context, index) {
+                  final issue = filteredIssues[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: IssueCard(issue: issue),
+                  );
+                },
+              ),
+            )
+          else
+            const Expanded(
+              child: Center(
+                child: Text(
+                  'No issues found',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
                   ),
-                  SizedBox(
-                    height: 50,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: recommendedDepartments.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 6),
-                          child: ActionChip(
-                            label: Text(recommendedDepartments[index]),
-                            onPressed: () {
-                              // 👉 Later you can navigate to department page
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-
-                  const Divider(),
-
-                  // Posts
-                  posts.isEmpty
-                      ? const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(20),
-                            child: Text(
-                              "No posts available in your community.",
-                            ),
-                          ),
-                        )
-                      : ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: posts.length,
-                          itemBuilder: (context, index) {
-                            final post = posts[index];
-                            return PostCard(
-                              username: post.username,
-                              community: post.community,
-                              title: post.title,
-                              description: post.description,
-                              imagePath: post.imagePath,
-                              comments: post.comments,
-                              likes: post.likes,
-                            );
-                          },
-                        ),
-                ],
+                ),
               ),
             ),
-    );
+          ],
+        ),
+      );
   }
 }

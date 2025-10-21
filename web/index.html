@@ -31,8 +31,76 @@
 
   <title>civic_issue_app</title>
   <link rel="manifest" href="manifest.json">
+
+  <script>
+    // The value below is injected by flutter build, do not touch.
+    var serviceWorkerVersion = null;
+  </script>
+
+  <script src="flutter.js" defer></script>
 </head>
 <body>
-  <script src="flutter_bootstrap.js" async></script>
+  <div id="loading">
+    <style>
+      body {
+        inset: 0;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+        position: fixed;
+      }
+      #loading {
+        align-items: center;
+        display: flex;
+        height: 100%;
+        justify-content: center;
+        width: 100%;
+      }
+      #loading img {
+        animation: 1s ease-in-out 0s infinite bounce;
+        height: 50px;
+        width: 50px;
+      }
+    </style>
+    <img src="icons/Icon-192.png" alt="Loading indicator..." />
+  </div>
+
+  <script>
+    window.addEventListener('load', function() {
+      // Initialize Flutter Web
+      _flutter.loader.loadEntrypoint({
+        serviceWorker: {
+          serviceWorkerVersion: serviceWorkerVersion,
+        },
+        onEntrypointLoaded: async function(engineInitializer) {
+          // Initialize engine
+          let appRunner = await engineInitializer.initializeEngine();
+          
+          // After engine initialization, load Google Maps
+          const script = document.createElement('script');
+          script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAm9nVajRcmDnifMyNjG171gCBmClpreWk&libraries=drawing,visualization';
+          script.async = true;
+          script.defer = true;
+          document.head.appendChild(script);
+          
+          // Wait for Maps to load
+          await new Promise((resolve) => {
+            script.onload = resolve;
+          });
+          
+          // Remove loading indicator
+          var loading = document.querySelector('#loading');
+          loading?.remove();
+          
+          // Run the app
+          await appRunner.runApp();
+        }
+      });
+    });
+  </script>
 </body>
 </html>
+  </script>
+</body>
+</html>
+  

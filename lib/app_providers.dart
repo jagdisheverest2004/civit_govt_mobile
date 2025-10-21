@@ -28,6 +28,33 @@ final userLocationProvider = StateNotifierProvider<UserLocationNotifier, AsyncVa
   (ref) => UserLocationNotifier(),
 );
 
+// ============================================================================
+// FILTER PROVIDERS
+// ============================================================================
+class IssueFilters {
+  final String? department;
+  final String? status;
+  final bool showNearby;
+
+  IssueFilters({
+    this.department,
+    this.status,
+    this.showNearby = false,
+  });
+
+  IssueFilters copyWith({
+    String? department,
+    String? status,
+    bool? showNearby,
+  }) {
+    return IssueFilters(
+      department: department ?? this.department,
+      status: status ?? this.status,
+      showNearby: showNearby ?? this.showNearby,
+    );
+  }
+}
+
 class UserLocationNotifier extends StateNotifier<AsyncValue<Position?>> {
   UserLocationNotifier() : super(const AsyncValue.loading()) {
     _getCurrentLocation();
@@ -129,33 +156,7 @@ final filtersProvider = StateNotifierProvider<FiltersNotifier, IssueFilters>(
   (ref) => FiltersNotifier(),
 );
 
-class IssueFilters {
-  final String? department;
-  final String? status;
-  final bool onlyNearby; // Within 2km
-  final double maxDistance; // in meters
-
-  IssueFilters({
-    this.department,
-    this.status,
-    this.onlyNearby = false,
-    this.maxDistance = 2000, // 2km default
-  });
-
-  IssueFilters copyWith({
-    String? department,
-    String? status,
-    bool? onlyNearby,
-    double? maxDistance,
-  }) {
-    return IssueFilters(
-      department: department ?? this.department,
-      status: status ?? this.status,
-      onlyNearby: onlyNearby ?? this.onlyNearby,
-      maxDistance: maxDistance ?? this.maxDistance,
-    );
-  }
-}
+// Using the IssueFilters class defined above
 
 class FiltersNotifier extends StateNotifier<IssueFilters> {
   FiltersNotifier() : super(IssueFilters());
@@ -168,12 +169,8 @@ class FiltersNotifier extends StateNotifier<IssueFilters> {
     state = state.copyWith(status: status);
   }
 
-  void toggleNearbyOnly() {
-    state = state.copyWith(onlyNearby: !state.onlyNearby);
-  }
-
-  void setMaxDistance(double distance) {
-    state = state.copyWith(maxDistance: distance);
+  void setShowNearby(bool show) {
+    state = state.copyWith(showNearby: show);
   }
 
   void clearFilters() {
@@ -207,7 +204,7 @@ final filteredIssuesProvider = Provider<List<Post>>((ref) {
   }
 
   // Filter by proximity (if location is available)
-  if (filters.onlyNearby && locationAsync.hasValue && locationAsync.value != null) {
+  if (filters.showNearby && locationAsync.hasValue && locationAsync.value != null) {
     final userPos = locationAsync.value!;
     filtered = filtered.where((post) {
       if (post.latitude == null || post.longitude == null) return false;
@@ -219,7 +216,7 @@ final filteredIssuesProvider = Provider<List<Post>>((ref) {
         post.longitude!,
       );
       
-      return distance <= filters.maxDistance;
+      return distance <= 2000; // 2km in meters
     }).toList();
   }
 

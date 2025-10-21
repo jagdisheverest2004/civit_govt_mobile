@@ -11,7 +11,22 @@ class LocationService {
     LocationPermission permission = await Geolocator.checkPermission();
     
     if (permission == LocationPermission.denied) {
+      // Show location permission rationale
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        await Geolocator.openLocationSettings();
+      }
+      
       permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Handle the case when user denies permission
+        return LocationPermission.denied;
+      }
+    }
+    
+    if (permission == LocationPermission.deniedForever) {
+      // Handle the case when user denies permission forever
+      await Geolocator.openAppSettings();
     }
     
     return permission;
