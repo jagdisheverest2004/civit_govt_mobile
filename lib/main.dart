@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'app_providers.dart';
+import 'services/notification_service.dart';
 import 'screens/home_screen.dart';
 import 'screens/post_screen.dart';
 import 'screens/ExploreScreen.dart';
@@ -7,45 +10,39 @@ import 'screens/alerts_screen.dart'; // Notifications
 import 'screens/community_screen.dart'; // ✅ import for community pages
 import 'widgets/app_header.dart';
 
-void main() {
-  runApp(const CivicIssueApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService.initialize();
+  
+  runApp(
+    const ProviderScope(child: CivicIssueApp()),
+  );
 }
 
-class CivicIssueApp extends StatelessWidget {
+class CivicIssueApp extends ConsumerWidget {
   const CivicIssueApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = ref.watch(themeProvider);
+    
     return MaterialApp(
       title: 'Civic Issues',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark().copyWith(
-        primaryColor: Colors.orange,
-        scaffoldBackgroundColor: Colors.black,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.black,
-          elevation: 0,
-          titleTextStyle: TextStyle(
-            color: Colors.orange,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-          iconTheme: IconThemeData(color: Colors.white),
-        ),
-      ),
+      theme: theme,
       home: const MainLayout(),
     );
   }
 }
 
-class MainLayout extends StatefulWidget {
+class MainLayout extends ConsumerStatefulWidget {
   const MainLayout({super.key});
 
   @override
-  State<MainLayout> createState() => _MainLayoutState();
+  ConsumerState<MainLayout> createState() => _MainLayoutState();
 }
 
-class _MainLayoutState extends State<MainLayout> {
+class _MainLayoutState extends ConsumerState<MainLayout> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
@@ -150,6 +147,30 @@ class _MainLayoutState extends State<MainLayout> {
                   onTap: () => _openCommunity(context, "HealthDept"),
                 ),
               ],
+            ),
+
+            const Divider(color: Colors.grey),
+
+            /// Theme Toggle
+            Consumer(
+              builder: (context, ref, child) {
+                final theme = ref.watch(themeProvider);
+                final isDark = theme.brightness == Brightness.dark;
+                
+                return SwitchListTile(
+                  title: const Text("Dark Mode"),
+                  subtitle: const Text("Toggle between light and dark themes"),
+                  value: isDark,
+                  activeThumbColor: Colors.orange,
+                  onChanged: (value) {
+                    ref.read(themeProvider.notifier).toggleTheme();
+                  },
+                  secondary: Icon(
+                    isDark ? Icons.dark_mode : Icons.light_mode,
+                    color: Colors.orange,
+                  ),
+                );
+              },
             ),
 
             const Divider(color: Colors.grey),

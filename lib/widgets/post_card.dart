@@ -78,39 +78,48 @@ class _PostCardState extends State<PostCard> {
             /// Top info row with small flair
             Row(
               children: [
-                Text(
-                  "x/${widget.community}",
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                Flexible(
+                  child: Text(
+                    "x/${widget.community}",
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 if (widget.tag != null) ...[
                   const SizedBox(width: 6),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: _getTagColor(widget.tag!).withOpacity(0.15),
-                      border: Border.all(
-                        color: _getTagColor(widget.tag!),
-                        width: 0.8,
+                  Flexible(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
                       ),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      widget.tag!,
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w500,
-                        color: _getTagColor(widget.tag!),
+                      decoration: BoxDecoration(
+                        color: _getTagColor(widget.tag!).withOpacity(0.15),
+                        border: Border.all(
+                          color: _getTagColor(widget.tag!),
+                          width: 0.8,
+                        ),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        widget.tag!,
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
+                          color: _getTagColor(widget.tag!),
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),
                 ],
                 const Spacer(),
-                Text(
-                  "u/${widget.username}",
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                Flexible(
+                  child: Text(
+                    "u/${widget.username}",
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),

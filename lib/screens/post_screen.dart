@@ -5,6 +5,8 @@ import '../data/post_model.dart';
 import 'dart:io';
 
 class PostScreen extends StatefulWidget {
+  const PostScreen({super.key});
+
   @override
   _PostScreenState createState() => _PostScreenState();
 }
@@ -152,7 +154,7 @@ class _PostScreenState extends State<PostScreen> {
     );
 
     setState(() {
-      postData.posts.insert(0, newPost);
+      postData.dummyPosts.insert(0, newPost);
       _descController.clear();
       _customIssueController.clear();
       _imagePath = null;
@@ -191,7 +193,7 @@ class _PostScreenState extends State<PostScreen> {
 
               // Issue Dropdown
               DropdownButtonFormField<String>(
-                value: _selectedIssue,
+                initialValue: _selectedIssue,
                 hint: const Text("Select Issue"),
                 items: _issues.map((issue) {
                   return DropdownMenuItem(value: issue, child: Text(issue));
@@ -222,7 +224,7 @@ class _PostScreenState extends State<PostScreen> {
 
               // Department Dropdown
               DropdownButtonFormField<String>(
-                value: _selectedDepartment,
+                initialValue: _selectedDepartment,
                 hint: const Text("Select Department"),
                 items: _departments.map((dept) {
                   return DropdownMenuItem(value: dept, child: Text(dept));
@@ -241,7 +243,7 @@ class _PostScreenState extends State<PostScreen> {
 
               // Community Dropdown
               DropdownButtonFormField<String>(
-                value: _selectedCommunity,
+                initialValue: _selectedCommunity,
                 hint: const Text("Select Community"),
                 items: _communities.map((comm) {
                   return DropdownMenuItem(value: comm, child: Text(comm));
@@ -303,7 +305,7 @@ class _PostScreenState extends State<PostScreen> {
               if (_imagePath != null)
                 Image.file(File(_imagePath!), height: 150),
               if (_videoPath != null)
-                Text("Video selected: " + _videoPath!.split('/').last),
+                Text("Video selected: ${_videoPath!.split('/').last}"),
             ],
           ),
         ),

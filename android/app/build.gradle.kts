@@ -7,12 +7,13 @@ plugins {
 
 android {
     namespace = "com.example.civic_issue_app"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 36  // Updated to meet plugin requirements
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -24,8 +25,8 @@ android {
         applicationId = "com.example.civic_issue_app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        minSdk = flutter.minSdkVersion  // Minimum SDK version for awesome_notifications
+        targetSdk = 36  // Target SDK version
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
@@ -41,4 +42,8 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 }

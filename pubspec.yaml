@@ -35,6 +35,31 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   image_picker: ^1.0.7
+  provider: ^6.1.2
+
+  # State management
+  flutter_riverpod: ^2.4.0
+  hooks_riverpod: ^2.4.0
+
+  # Maps & location
+  google_maps_flutter: ^2.5.0
+  geolocator: ^10.0.0
+
+  # Notifications
+  flutter_local_notifications: ^9.9.1
+
+  # Camera & media
+  camera: ^0.10.5+5
+
+  # UI/UX enhancements
+  flutter_slidable: ^3.0.0
+  animations: ^2.0.8
+  lottie: ^2.7.0
+  shimmer: ^3.0.0
+  badges: ^3.1.2
+  timeline_tile: ^2.0.0
+  modal_bottom_sheet: ^3.0.0
+  flutter_staggered_grid_view: ^0.7.0
 
 dev_dependencies:
   flutter_test:

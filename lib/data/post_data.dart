@@ -1,6 +1,6 @@
 import 'post_model.dart';
 
-List<Post> posts = [
+List<Post> dummyPosts = [
   Post(
     username: "Rajesh",
     community: "Chennai",
@@ -8,6 +8,11 @@ List<Post> posts = [
     description: "Needs urgent repair, causing traffic.",
     likes: 12,
     comments: 5,
+    latitude: 13.0878,
+    longitude: 80.2205,
+    department: "Road Safety",
+    status: "open",
+    contributors: ["Rajesh", "Kumar"],
   ),
   Post(
     username: "Priya",
@@ -16,5 +21,38 @@ List<Post> posts = [
     description: "Streets completely flooded.",
     likes: 20,
     comments: 8,
+    latitude: 13.0827,
+    longitude: 80.2707,
+    department: "Water Issue",
+    status: "in_progress",
+    assignedOfficer: "Officer Sharma",
+    contributors: ["Priya", "Arun", "Lakshmi"],
+  ),
+  Post(
+    username: "Arun",
+    community: "Coimbatore",
+    title: "Streetlight not working",
+    description: "Multiple streetlights broken in our area.",
+    likes: 8,
+    comments: 3,
+    latitude: 11.0168,
+    longitude: 76.9558,
+    department: "Electricity",
+    status: "open",
+    contributors: ["Arun"],
+  ),
+  Post(
+    username: "Lakshmi",
+    community: "Madurai",
+    title: "Garbage not collected",
+    description: "Waste pile growing for the past week.",
+    likes: 15,
+    comments: 6,
+    latitude: 9.9252,
+    longitude: 78.1198,
+    department: "Sanitation",
+    status: "resolved",
+    assignedOfficer: "Officer Patel",
+    contributors: ["Lakshmi", "Vijay"],
   ),
 ];

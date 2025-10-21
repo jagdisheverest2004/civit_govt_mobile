@@ -1,7 +1,20 @@
 import 'package:flutter/material.dart';
+import '../services/notification_service.dart';
 
-class AlertsScreen extends StatelessWidget {
+class AlertsScreen extends StatefulWidget {
   const AlertsScreen({super.key});
+
+  @override
+  State<AlertsScreen> createState() => _AlertsScreenState();
+}
+
+class _AlertsScreenState extends State<AlertsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Initialize notifications
+    NotificationService.initialize();
+  }
 
   @override
   Widget build(BuildContext context) {

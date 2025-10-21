@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
-import '../data/post_data.dart'; // reuse posts list
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../app_providers.dart';
 
-class StatusScreen extends StatelessWidget {
+class StatusScreen extends ConsumerWidget {
   const StatusScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final issues = ref.watch(issuesProvider);
+    
     return ListView.builder(
       padding: const EdgeInsets.all(8),
-      itemCount: posts.length,
+      itemCount: issues.length,
       itemBuilder: (context, index) {
-        final post = posts[index];
+        final post = issues[index];
 
         // Temporary frontend-only placeholders
         final title = post.title.isNotEmpty ? post.title : "Untitled Issue";
