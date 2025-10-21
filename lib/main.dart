@@ -4,7 +4,7 @@ import 'app_providers.dart';
 import 'services/notification_service.dart';
 import 'screens/home_screen.dart';
 import 'screens/post_screen.dart';
-import 'screens/ExploreScreen.dart';
+import 'screens/ExploreScreen_new.dart';
 import 'screens/status_screen.dart'; // Issues
 import 'screens/alerts_screen.dart'; // Notifications
 import 'screens/community_screen.dart'; // ✅ import for community pages
